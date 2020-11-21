@@ -31,7 +31,7 @@
       #websiteFrame {grid-area: website; border: 5px solid #444;  -ms-grid-row:3;-ms-grid-column:2;}
       #sourcecode   {grid-area: code; border: 5px solid lightgray;overflow: scroll; margin:0px;  -ms-grid-row:4;-ms-grid-column:2;}
 
-      #website {width: calc(100% - 5px);height: calc(100% - 5px);}
+      #website {width: calc(100% - 5px);height: 250px;}
 
 
       /* Edge hack, God I hate this browser */
@@ -57,9 +57,9 @@
     <div id="container">
       <div id="blocklyArea"></div>
       <div id="menubar">
-        <div><span id="saveText">💾 Save blocks:</span> <input type="button" value="Save" id="saveButton" /></div>
-        <div><span id="loadText">📂 Load blocks:</span> <input type="file" id="fileButton" style="max-width:200px" /></div>
-        <div><span id="exportText">📄 Export webpage as HTML:</span> <input type="button" value="Export" id="exportButton" /></div>
+        <div><span id="saveText">💾 保存blocks:</span> <input type="button" value="保存" id="saveButton" /></div>
+        <div><span id="loadText">📂 加载blocks:</span> <input type="file" id="fileButton" style="max-width:200px" /></div>
+        <div><span id="exportText">📄 导出网页代码:</span> <input type="button" value="导出" id="exportButton" /></div>
         <script>
           if (typeof(Msg) == "object" && Msg.buttons) {
             document.getElementById("saveText").textContent   = Msg.buttons.save.desc;
@@ -70,8 +70,8 @@
           }
         </script>
       </div>
-      <div><span id="previewBtn">预览网页:</span> <input type="button" value="preview" id="previewButton" onclick="preview();"/></div>
-      <div id="title">untitled web page</div>
+      <div></div>
+      <div id="title"><span id="previewBtn"></span> <input type="button" value="预览网页" id="previewButton" onclick="preview();"/></div>
       <div id="websiteFrame"><iframe id="website"></iframe></div>
       <pre id="sourcecode">sum contnent</pre>
     </div>
@@ -526,13 +526,16 @@
 
       function saveWorkspaceToDownload() {
         var xml = Blockly.Xml.workspaceToDom(workspace);
+        // var xml = Blockly.JavaScript.workspaceToCode(workspace);
         var xml_text = Blockly.Xml.domToText(xml);
         newWindow = window.open("data:application/octet-stream," + encodeURIComponent(xml_text), 'webseite.blockly.xml');
       }
       document.getElementById("saveButton").onclick = saveWorkspaceToDownload;
 
       function saveHtmlToDownload() {
-        var code = HtmlGenerator.workspaceToCode(workspace);
+        // var code = HtmlGenerator.workspaceToCode(workspace);
+        var code = Blockly.JavaScript.workspaceToCode(workspace);
+
         newWindow = window.open("data:application/octet-stream," + encodeURIComponent(code), 'webseite.html');
       }
       document.getElementById("exportButton").onclick = saveHtmlToDownload;
