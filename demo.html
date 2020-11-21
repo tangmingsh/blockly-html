@@ -68,6 +68,7 @@
           }
         </script>
       </div>
+      <div><span id="saveText">预览网页:</span> <input type="button" value="preview" id="previewButton" onclick="preview();"/></div>
       <div id="title">untitled web page</div>
       <div id="websiteFrame"><iframe id="website"></iframe></div>
       <pre id="sourcecode">sum contnent</pre>
@@ -432,6 +433,14 @@
         <category name="functions" colour="#9A5CA6" custom="PROCEDURE"></category>
             <sep></sep>
     </xml>
+    <script>
+      function  preview(){
+        console.log('preview button clicked!');
+        var code = Blockly.JavaScript.workspaceToCode(workspace);
+        document.getElementById('sourcecode').innerText = code;
+        document.getElementById('website').src = "data:text/html;charset=utf-8," + encodeURIComponent(code);
+      }
+    </script>
 
     <script>
       if (typeof(Msg) == "object" && Msg.categories) {
@@ -504,7 +513,7 @@
         // var code = HtmlGenerator.workspaceToCode(workspace);
         var code = Blockly.JavaScript.workspaceToCode(workspace);
         document.getElementById('sourcecode').innerText = code;
-        document.getElementById('website').src = "data:text/html;charset=utf-8," + encodeURIComponent(code);
+        // document.getElementById('website').src = "data:text/html;charset=utf-8," + encodeURIComponent(code);
 
         // Save Blocks
         var xml = Blockly.Xml.workspaceToDom(workspace);
