@@ -31,7 +31,7 @@
       #websiteFrame {grid-area: website; border: 5px solid #444;  -ms-grid-row:3;-ms-grid-column:2;}
       #sourcecode   {grid-area: code; border: 5px solid lightgray;overflow: scroll; margin:0px;  -ms-grid-row:4;-ms-grid-column:2;}
 
-      #website {width: calc(100% - 5px);height: 250px;}
+      #website {width: calc(100% - 5px);height: 260px;}
 
 
       /* Edge hack, God I hate this browser */
@@ -46,8 +46,7 @@
     <script src="en.js"></script>
 <!--    <script src="html_generators.js"></script>-->
 <!--    <script src="html_blocks.js"></script>-->
-        <script src="block_definition.js"></script>
-        <script src="generator_stub.js"></script>
+
 
     <!-- For JS-Blocks only -->
     <script src="blockly/blocks_compressed.js"></script>
@@ -74,8 +73,43 @@
       <div id="title"><span id="previewBtn"></span> <input type="button" value="预览网页" id="previewButton" onclick="preview();"/></div>
       <div id="websiteFrame"><iframe id="website"></iframe></div>
       <pre id="sourcecode">sum contnent</pre>
+      <button type="button" value="save" id="save" style="width: 50%;"> 下载HTML代码</button>
     </div>
+    <script>
+      //保存html脚本文件，并下载
+      function saveTextAsFile()
+      {
+        var textToWrite = document.getElementById('sourcecode').innerText;
+        var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+        var fileNameToSaveAs = "index.html";
 
+        var downloadLink = document.createElement("a");
+        downloadLink.download = fileNameToSaveAs;
+        downloadLink.innerHTML = "Download File";
+        if (window.webkitURL != null)
+        {
+          // Chrome allows the link to be clicked
+          // without actually adding it to the DOM.
+          downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+        }
+        else
+        {
+          // Firefox requires the link to be added to the DOM
+          // before it can be clicked.
+          downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+          downloadLink.onclick = function(){
+            document.body.removeChild(downloadLink);
+          };
+          downloadLink.style.display = "none";
+          document.body.appendChild(downloadLink);
+        }
+
+        downloadLink.click();
+      }
+
+      var button = document.getElementById('save');
+      button.addEventListener('click', saveTextAsFile);
+    </script>
     <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
 
         <category name="logic" colour="#5C81A6">
@@ -430,17 +464,31 @@
               </shadow>
             </value>
           </block>
+          <block type="block_load_scripts"></block>
+
         </category>
-        <category name="variables" colour="#A65C81" custom="VARIABLE"></category>
-        <category name="functions" colour="#9A5CA6" custom="PROCEDURE"></category>
+        <category name="variables" colour="#A65C81" custom="VARIABLE">
+
+        </category>
+        <category name="functions" colour="#9A5CA6" custom="PROCEDURE">
+
+        </category>
             <sep></sep>
     </xml>
     <script>
       function  preview(){
         console.log('preview button clicked!');
         var code = Blockly.JavaScript.workspaceToCode(workspace);
-        document.getElementById('sourcecode').innerText = code;
-        document.getElementById('website').src = "data:text/html;charset=utf-8," + encodeURIComponent(code);
+        // var mycode = '<html>\n<head>\n<\/head>\n<body>\n'+
+        //         '<script>'+ code +'<\/script>\n'+
+        //         '<\/body>\n<\/html>';
+        var mycode = "<!DOCTYPE html>\n<html>\n<head>\n<\/head>\n<body>\n"+"<div>hello</div><img src='cat.jpg' width='300px'>\n"+"<script>"+ code +"<\/script>\n"+"<\/body>\n<\/html>";
+        document.getElementById('sourcecode').innerText = mycode;
+        //html脚本使用encodeURIComponent编码， 如果html 元素含有引号无法正常预览
+        // document.getElementById('website').src = "data:text/html;charset=utf-8," + mycode;
+        document.getElementById('website').srcdoc = mycode;
+        console.log(mycode);
+        // document.getElementById('website').src = "data:text/html;charset=utf-8," + encodeURIComponent(mycode);
       }
     </script>
 
@@ -559,5 +607,9 @@
       document.getElementById('fileButton').addEventListener('change', loadWorkspaceFromUpload, false);
 
      </script>
+<!--    以下两个js文件必须放在xml block 下方，否则出错！ -->
+    <script src="block_definition.js"></script>
+    <script src="generator_stub.js"></script>
+
   </body>
 </html>
